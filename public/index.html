@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<style>
+.col-sm-6 {
+	padding-left: 5px;
+}
+
+.form-group {
+    margin-top: 10px;
+    margin-bottom: 15px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.list-group {
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left:  5px;
+	margin-right: 5px;
+	border-bottom-color: #ffffff !important;
+}
+</style>
+	    <head>
+	        <meta charset="utf-8">
+	        <title>Blog</title>
+
+	        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+
+	        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+	        <script>
+		        angular.module('myApp', []);        
+	            angular.module('myApp').controller('ItemCtrl', function($scope,$http) {				
+					$scope.sendPost = function() {	
+			
+						$http.post('/items', {
+							title: 	$scope.title, 
+							body: 	$scope.body 
+						}).then(function(response) {
+							console.log(response);
+							getPosts();
+						});		
+						
+						$scope.title = '';
+						$scope.body = '';
+					};
+
+					function getPosts() {
+						var promise = $http.get('/items');		
+							promise.then(httpSuccess,httpError);	
+							
+							function httpSuccess(response) {
+								console.log('httpSuccess response: ', response);
+								$scope.replies = response.data;		
+							}
+
+							function httpError(response) {
+								console.log('httpError response: ', response);
+							}
+						}
+
+						getPosts();
+	            });
+	           
+	        </script>
+	    </head>
+	    
+	    <div class="container-fluid">
+	    	<div class="row">
+	    		<div class=".col-md-12">
+	    			<center><h3> Blog App </h3></center>
+	    		</div>
+	    	</div>
+	    </div>	
+
+	    	<div class="row">                               
+
+        		<div class="col-sm-6">      
+
+            		<div class="panel panel-info">
+
+		                <div class="panel-heading">
+
+		                    <center><h3 class="panel-title">Create Post</h3></center>  
+
+		                </div>                           
+
+		                    <body ng-app="myApp" ng-controller="ItemCtrl">
+
+			                    <div class="form-group">                          
+								    <label>Title</label>                
+								    <input type="text"  ng-model="title" class="form-control" placeholder="Title" required>   
+								</div>
+
+			
+									<div class="form-group">
+									  <label for="body">Body</label>
+									  <textarea ng-model="body"  class="form-control" rows="5" placeholder="Body"></textarea>
+									</div>
+
+
+								<div class="text-center">                           
+								    <input type="button" class="btn btn-primary" value="Post" ng-click="sendPost()" ng-disabled="!title || !body">
+								</div>
+								<br></br>
+
+		   					</body>
+                	</div>
+
+                </div>
+
+                <div class="col-sm-6">      
+
+            		<div class="panel panel-info">
+
+		                <div class="panel-heading">
+
+		                    <center><h3 class="panel-title">Past Post</h3></center>  
+
+		                </div> 
+
+		                	<div class="list-group" ng-repeat="reply in replies">
+		                		<h4 class="list-group-item-heading">{{reply.title}}</h4>
+							    <p class="list-group-item-text">{{reply.body}}</p>
+							</div>                          
+
+                	</div>
+
+                </div>
+
+            </div> 
+                   
+</html>
